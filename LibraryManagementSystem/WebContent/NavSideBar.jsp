@@ -157,7 +157,7 @@
                 <a href="javascript:;" data-toggle="collapse" data-target="#admin"><i class="fa fa-fw fa-arrows-v"></i> Administrator <i class="fa fa-fw fa-caret-down"></i></a>
                 <ul id="admin" class="collapse">
                     <li>
-                        <a href="#">Manage Books</a>
+                        <a href="admin_book.jsp">Manage Books</a>
                     </li>
                     <li>
                         <a href="admin_author.jsp">Manage Authors</a>

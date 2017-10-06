@@ -13,12 +13,19 @@ public class Book implements Serializable{
 	
 	private Integer	  bookId;
 	private String 	  title;
-	
-	private Integer 	   publisher;
+	private Publisher 	   publisher;
 	private List<Author>   authors;
 	private List<Genre>    genres;
 	private List<Borrower> borrowers;
 	
+	public Publisher getPublisher() {
+		return publisher;
+	}
+
+	public void setPublisher(Publisher publisher) {
+		this.publisher = publisher;
+	}
+
 	private Integer numOfCopies;
 
 	public Integer getBookId() {
@@ -35,14 +42,6 @@ public class Book implements Serializable{
 
 	public void setTitle(String title) {
 		this.title = title;
-	}
-
-	public Integer getPublisher() {
-		return publisher;
-	}
-
-	public void setPublisher(Integer publisher) {
-		this.publisher = publisher;
 	}
 
 	public List<Author> getAuthors() {
@@ -82,7 +81,6 @@ public class Book implements Serializable{
 		final int prime = 31;
 		int result = 1;
 		result = prime * result + ((bookId == null) ? 0 : bookId.hashCode());
-		result = prime * result + ((publisher == null) ? 0 : publisher.hashCode());
 		result = prime * result + ((title == null) ? 0 : title.hashCode());
 		return result;
 	}
@@ -100,11 +98,6 @@ public class Book implements Serializable{
 			if (other.bookId != null)
 				return false;
 		} else if (!bookId.equals(other.bookId))
-			return false;
-		if (publisher == null) {
-			if (other.publisher != null)
-				return false;
-		} else if (!publisher.equals(other.publisher))
 			return false;
 		if (title == null) {
 			if (other.title != null)

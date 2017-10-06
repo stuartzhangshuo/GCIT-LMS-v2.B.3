@@ -9,6 +9,8 @@ import java.util.*;
 
 import com.gcit.libmgmtsys.entity.Author;
 import com.gcit.libmgmtsys.entity.Book;
+import com.gcit.libmgmtsys.entity.BookCopies;
+import com.gcit.libmgmtsys.entity.Genre;
 import com.gcit.libmgmtsys.entity.Publisher;
 
 @SuppressWarnings({"unchecked", "rawtypes"})
@@ -25,13 +27,13 @@ public class BookDAO extends BaseDAO{
 	
 	//insert a new book into book table and return generated ID
 	public Integer addBookWithID(Book book) throws SQLException {
-		return executeUpdateWithID("INSERT INTO tbl_book (bookName) VALUES(?)",
+		return executeUpdateWithID("INSERT INTO tbl_book (title) VALUES(?)",
 				new Object[] {book.getTitle()});
 	}
 	
 	//update the name of a book
 	public void updateBook(Book book) throws SQLException {
-		executeUpdate("UPDATE tbl_book SET bookName = ? WHERE bookId = ?",
+		executeUpdate("UPDATE tbl_book SET title = ? WHERE bookId = ?",
 				new Object[] {book.getTitle(), book.getBookId()});
 	}
 	
@@ -49,15 +51,26 @@ public class BookDAO extends BaseDAO{
 		executeUpdate("DELETE FROM tbl_book WHERE bookId = ?",
 				new Object[] {book.getBookId()});
 	}
+	
 	//get all books or all books have a similar title to the input title
-	public List<Book> getBooks(String bookTitle) throws SQLException {
-		if (bookTitle != null && !bookTitle.isEmpty()) {
-			bookTitle = "%" + bookTitle + "%";
+	public List<Book> readBooks(String bookName, Integer pageNo) throws SQLException {
+		setPageNo(pageNo);
+		if (bookName != null && !bookName.isEmpty()) {
+			bookName = "%" + bookName + "%";
 			return executeQuery("SELECT * FROM tbl_book WHERE title LIKE ?",
-					new Object[] {bookTitle});
+					new Object[] {bookName});
 		} else {
 			return executeQuery("SELECT * FROM tbl_book", null);
 		}
+	}
+	
+	public Integer getBooksCount() throws SQLException {
+		return getCount("SELECT COUNT(*) as COUNT FROM tbl_book", null);
+	}
+	
+	public void addPublisher(Book book) throws SQLException {
+		executeUpdate("UPDATE tbl_book SET pubId = ? WHERE bookId = ?",
+				new Object[] {book.getPublisher().getPublisherId(), book.getBookId()});
 	}
 	
 //	public List<Book> getBooksWithBranchId(String branchId) throws NumberFormatException, SQLException {
@@ -97,26 +110,41 @@ public class BookDAO extends BaseDAO{
 	
 	@Override
 	protected List<Book> parseData(ResultSet rs) throws SQLException {
-		AuthorDAO   authorDao   = new AuthorDAO(conn);
-		GenreDAO    genreDao    = new GenreDAO(conn);
-		BorrowerDAO borrowerDao = new BorrowerDAO(conn);
+		AuthorDAO     authorDao     = new AuthorDAO(conn);
+		GenreDAO      genreDao      = new GenreDAO(conn);
+		BorrowerDAO   borrowerDao   = new BorrowerDAO(conn);
+		BookCopiesDAO bookCopiesDao = new BookCopiesDAO(conn);
+		PublisherDAO  publisherDao  = new PublisherDAO(conn);
+		
 		String  sql_author = "SELECT * FROM tbl_author WHERE authorId IN " +
 					        "(SELECT authorId FROM tbl_book_authors WHERE bookId = ?)";
 		
 		String  sql_genre  = "SELECT * FROM tbl_genre WHERE genre_id IN " +
 			                "(SELECT genre_id FROM tbl_book_genres WHERE bookId = ?)";
 		
+		String sql_publisher = "SELECT * FROM tbl_publisher WHERE publisherId = ?";
+		
 		String sql_borrowers = "SELECT * FROM tbl_borrower WHERE cardNo IN " +
                 			  "(SELECT cardNo FROM tbl_book_loans WHERE bookId = ?)";
+		
+		String sql_noOfCopies = "SELECT bookId, branchId, sum(noOfCopies) as noOfCopies FROM tbl_book_copies WHERE bookId = ?";
+		
 		List<Book> books = new ArrayList<>();
 		while (rs.next()) {
 			Book book = new Book();
 			book.setBookId(rs.getInt("bookId"));
 			book.setTitle(rs.getString("title"));
-			book.setPublisher(rs.getInt("pubId"));
+			List<Publisher> publisher = publisherDao.executeFirstLevelQuery(sql_publisher, new Object[] {rs.getInt("pubId")});
+			if (publisher == null || publisher.isEmpty()) {
+				book.setPublisher(null);
+			} else {
+				book.setPublisher(publisher.get(0));
+			}
 			book.setAuthors(authorDao.executeFirstLevelQuery(sql_author, new Object[] {book.getBookId()}));
 			book.setGenres(genreDao.executeFirstLevelQuery(sql_genre, new Object[] {book.getBookId()}));
 			book.setBorrowers(borrowerDao.executeFirstLevelQuery(sql_borrowers, new Object[] {book.getBookId()}));
+			List<BookCopies> bookCopies = bookCopiesDao.executeFirstLevelQuery(sql_noOfCopies, new Object[] {book.getBookId()});
+			book.setNumOfCopies(bookCopies.get(0).getNoOfCopies());	//no of copies in all branch
 			books.add(book);
 		}
 		return books;
@@ -129,7 +157,6 @@ public class BookDAO extends BaseDAO{
 			Book book = new Book();
 			book.setBookId(rs.getInt("bookId"));
 			book.setTitle(rs.getString("title"));
-			book.setPublisher(rs.getInt("pubId"));
 			books.add(book);
 		}
 		return books;
@@ -142,4 +169,26 @@ public class BookDAO extends BaseDAO{
 		}
 		return null;
 	}
+	
+	public List<Book> checkBookByName(String title) throws SQLException {
+		List<Book> books = executeQuery("SELECT * FROM tbl_book WHERE title = ?", 
+				new Object[] {title});
+		if (books.size() > 0) {
+			return books;
+		}
+		return null;
+	}
+	public void addBookAuthor(Book book) throws SQLException {
+		for (Author author : book.getAuthors()) {
+			executeUpdate("INSERT INTO tbl_book_authors VALUES(?, ?)", 
+					new Object[] {book.getBookId(), author.getAuthorId()});
+		}
+	}
+	public void addBookGenre(Book book) throws SQLException {
+		for (Genre genre : book.getGenres()) {
+			executeUpdate("INSERT INTO tbl_book_genres VALUES(?, ?)", 
+					new Object[] {genre.getGenreId(), book.getBookId()});
+		}
+	}
+	
 }

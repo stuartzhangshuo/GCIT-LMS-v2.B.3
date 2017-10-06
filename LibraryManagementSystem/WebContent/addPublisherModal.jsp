@@ -4,7 +4,7 @@
 <%@page import="com.gcit.libmgmtsys.service.AdminService"%>
 <%
 	AdminService service = new AdminService();
-	List<Book>   books   = service.readBooks(null);
+	List<Book>   books   = service.readBooks(null, 1);
 %>
 <div>
 	<div class="modal-header">

@@ -8,7 +8,7 @@
 	Author       author      = service.readOneAuthor(authorId);
 	String       authorName  = author.getAuthorName();
 	List<Book>   authorBooks = author.getBooks();
-	List<Book>   books       = service.readBooks(null);
+	List<Book>   books       = service.readBooks(null, 1);
 %>
 <div>
 	<div class="modal-header">

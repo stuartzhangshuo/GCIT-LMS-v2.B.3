@@ -8,7 +8,7 @@
 	Genre		 genre		 = service.readOneGenre(genreId);
 	String       genreName   = genre.getGenreName();
 	List<Book>   genreBooks  = genre.getBooks();
-	List<Book>   books       = service.readBooks(null);
+	List<Book>   books       = service.readBooks(null, 1);
 %>
 <div>
 	<div class="modal-header">
