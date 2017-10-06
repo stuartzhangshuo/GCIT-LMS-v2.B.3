@@ -20,7 +20,7 @@ import com.gcit.libmgmtsys.service.AdminService;
 @WebServlet({"/addAuthor",    "/updateAuthor",    "/deleteAuthor",    "/addGenre", 		   "/updateGenre", 		   "/deleteGenre",
 			 "/addPublisher", "/updatePublisher", "/deletePublisher", "/addLibraryBranch", "/updateLibraryBranch", "/deleteLibraryBranch",
 			 "/addBorrowers", "/updateBorrowers", "/deleteBorrowers", "/overrideBookLoans", 
-			 "/pageAuthors", "/pageGenres", "/pagePublishers", "/pageBooks", "/addBook"})
+			 "/pageAuthors", "/pageGenres", "/pagePublishers", "/pageBooks", "/addBook", "/deleteBook", "/updateBook"})
 public class AdminServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 	
@@ -52,6 +52,9 @@ public class AdminServlet extends HttpServlet {
 				break;
 			case "/pageBooks":
 				redirectURL = pageBooks(request);
+				break;
+			case "/deleteBook":
+				redirectURL = deleteBook(request);
 				break;
 			case "/deleteGenre":
 				redirectURL = deleteGenre(request);
@@ -100,6 +103,26 @@ public class AdminServlet extends HttpServlet {
 			}
 		} else {
 			message = "Author not found, please contact admin.";
+		}
+		request.setAttribute("statusMessage", message);
+		return redirectURL;
+	}
+	
+	private String deleteBook(HttpServletRequest request) {
+		String redirectURL = "admin_book.jsp";
+		String message     = "Book deleted Successfully";
+		if (request.getParameter("bookId") != null) {
+			Integer bookId = Integer.parseInt(request.getParameter("bookId"));
+			Book book = new Book();
+			book.setBookId(bookId);
+			try {
+				adminService.deleteBook(book);
+			} catch (SQLException e) {
+				e.printStackTrace();
+				message = "Book deleted Failed";
+			}
+		} else {
+			message = "Book not found, please contact admin.";
 		}
 		request.setAttribute("statusMessage", message);
 		return redirectURL;
@@ -219,6 +242,7 @@ public class AdminServlet extends HttpServlet {
 				redirectURL = addBook(request);
 				break;
 			case "/updateBook":
+				redirectURL = updateBook(request);
 				break;
 			case "/addAuthor":
 				redirectURL = addAuthor(request);
@@ -254,6 +278,7 @@ public class AdminServlet extends HttpServlet {
 		rd.forward(request, response);
 	}
 	
+
 	private String addAuthor(HttpServletRequest request) {
 		String   message     = "Author added successfully!";
 		String   redirectURL = "admin_author.jsp";
@@ -340,6 +365,66 @@ public class AdminServlet extends HttpServlet {
 					book.setPublisher(publisher);
 				}
 				adminService.addBook(book);
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+		}
+		request.setAttribute("statusMessage", message);
+		return redirectURL;
+	}
+	
+	private String updateBook(HttpServletRequest request) {
+		String   message     = "Book added successfully!";
+		String   redirectURL = "admin_book.jsp";
+		Book	 book		 = new Book();
+		Integer  bookId		 = Integer.parseInt(request.getParameter("bookId"));
+		String   title       = request.getParameter("bookTitle").trim().replaceAll("\\s+", " ");
+		String   pubilsherId = request.getParameter("publisherId");
+		String[] authorIds	 = request.getParameterValues("authorIds");
+		String[] genreIds	 = request.getParameterValues("genreIds");
+		Boolean  exist 		 = Boolean.FALSE;
+		try {
+			if (!title.equalsIgnoreCase(request.getParameter("bookTitleOriginal")) && 
+					adminService.checkBookName(title)) {
+				exist = Boolean.TRUE;
+			}
+		} catch (SQLException e1) {
+			e1.printStackTrace();
+		}
+		if (title == null || title.length() == 0) {
+			message = "title can't be empty, please try again.";
+		} else if (exist){
+			message = "title already exists, please enter a new name.";
+		} else if (title.length() > 45) {
+			message = "title can't be more than 45 chars, please try again.";
+		} else {
+			book.setTitle(title);
+			book.setBookId(bookId);
+			try {
+				if (authorIds != null && authorIds.length > 0) {
+					List<Author> authors = new ArrayList<>();
+					for (String authorId : authorIds) {
+						Author author = new Author();
+						author = adminService.readOneAuthor(Integer.parseInt(authorId));
+						authors.add(author);
+					}
+					book.setAuthors(authors);
+				}
+				if (genreIds != null && genreIds.length > 0) {
+					List<Genre> genres = new ArrayList<>();
+					for (String genreId : genreIds) {
+						Genre genre = new Genre();
+						genre = adminService.readOneGenre(Integer.parseInt(genreId));
+						genres.add(genre);
+					}
+					book.setGenres(genres);
+				}
+				if (pubilsherId != null) {
+					Publisher publisher = new Publisher();
+					publisher.setPublisherId(Integer.parseInt(pubilsherId));
+					book.setPublisher(publisher);
+				}
+				adminService.updateBook(book);
 			} catch (SQLException e) {
 				e.printStackTrace();
 			}

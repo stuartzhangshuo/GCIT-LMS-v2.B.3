@@ -2,7 +2,13 @@
 <%@page import="com.gcit.libmgmtsys.entity.*"%>
 <%@page import="com.gcit.libmgmtsys.service.AdminService"%>
 <%
-	AdminService    service    = new AdminService();
+	AdminService    service       = new AdminService();
+	Integer 		bookId	   	  = Integer.parseInt(request.getParameter("bookId"));
+	Book			book	   	  = service.readOneBook(bookId);
+	Publisher 	    bookPublisher = book.getPublisher();
+	List<Author>    bookAuthors   = book.getAuthors();
+	List<Genre>     bookGenres    = book.getGenres();
+	
 	List<Author>    authors    = service.readAuthors(null, 1);
 	List<Publisher> publishers = service.readPublishers(null, 1);
 	List<Genre>     genres     = service.readGenres(null, 1);
@@ -11,39 +17,54 @@
 	<div class="modal-header">
 		<button type="button" class="close" data-dismiss="modal" aria-label="Close">
 		<span aria-hidden="true">&times;</span></button>
-		<h4 class="modal-title">Add New Book Information</h4>
+		<h4 class="modal-title">Update Book Information</h4>
 	</div>
-	<form action="addBook" method="post">
+	<form action="updateBook" method="post">
 		<div class="modal-body">
 			<p>Enter the title of your book:</p>
-			<input type="text" class="form-control" name="bookTitle">
+			<input type="text" class="form-control" name="bookTitle" value = "<%=book.getTitle()%>">
+			<input type="hidden" class="form-control" name="bookTitleOriginal" value="<%=book.getTitle() %>">
+			<input type="hidden" class="form-control" name="bookId" value="<%=book.getBookId()%>">
 			<br>
-			<p>You can also select a publisher for this book: </p>
+			<p>You can modify publisher for this book: </p>
 			<div class = "form-group" align = "center">
 				<select class = "form-control" id="publisherList" name="publisherId" style = "width:500px">
 					<% for (Publisher publisher : publishers) { %>
-						<option value="<%=publisher.getPublisherId()%>"><%=publisher.getPublisherName()%></option>
+						<% if (bookPublisher != null && bookPublisher.equals(publisher)){ %>
+							<option value="<%=publisher.getPublisherId()%>" selected><%=publisher.getPublisherName()%></option>
+						<% }else { %>
+							<option value="<%=publisher.getPublisherId()%>"><%=publisher.getPublisherName()%></option>
+						<%} %>
 					<% } %>
 				</select>
 			</div>
 			<br>
-			<p>You can also select authors for this book: </p>
+			<p>You can modify authors for this book: </p>
 			<div class = "form-group" align = "center">
 				<select class = "form-control" id="authorList" multiple="multiple" size = 5 name="authorIds" style = "width:500px">
 					<% for (Author author : authors) { %>
-						<option value="<%=author.getAuthorId()%>"><%=author.getAuthorName()%></option>
+						<% if (bookAuthors.contains(author)){ %>
+							<option value="<%=author.getAuthorId()%>" selected><%=author.getAuthorName()%></option>
+						<% }else { %>
+							<option value="<%=author.getAuthorId()%>"><%=author.getAuthorName()%></option>
+						<%} %>
 					<% } %>
 				</select>
 			</div>
 			<br>
-			<p>You can also select genres for this book: </p>
+			<p>You can modify genres for this book: </p>
 			<div class = "form-group" align = "center">
 				<select class = "form-control" id="genreList" multiple="multiple" size = 5 name="genreIds" style = "width:500px">
 					<% for (Genre genre : genres) { %>
-						<option value="<%=genre.getGenreId()%>"><%=genre.getGenreName()%></option>
+						<% if (bookGenres.contains(genre)){ %>
+							<option value="<%=genre.getGenreId()%>" selected><%=genre.getGenreName()%></option>
+						<% }else { %>
+							<option value="<%=genre.getGenreId()%>"><%=genre.getGenreName()%></option>
+						<%} %>
 					<% } %>
 				</select>
 			</div>
+			<br>
 		</div>
 		<div class="modal-footer">
 			<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>

@@ -77,21 +77,14 @@ public class Publisher implements Serializable{
 	public void setBooks(List<Book> books) {
 		this.books = books;
 	}
-	/* (non-Javadoc)
-	 * @see java.lang.Object#hashCode()
-	 */
 	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + ((publisherAddress == null) ? 0 : publisherAddress.hashCode());
 		result = prime * result + ((publisherId == null) ? 0 : publisherId.hashCode());
 		result = prime * result + ((publisherName == null) ? 0 : publisherName.hashCode());
 		return result;
 	}
-	/* (non-Javadoc)
-	 * @see java.lang.Object#equals(java.lang.Object)
-	 */
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)
@@ -101,11 +94,6 @@ public class Publisher implements Serializable{
 		if (getClass() != obj.getClass())
 			return false;
 		Publisher other = (Publisher) obj;
-		if (publisherAddress == null) {
-			if (other.publisherAddress != null)
-				return false;
-		} else if (!publisherAddress.equals(other.publisherAddress))
-			return false;
 		if (publisherId == null) {
 			if (other.publisherId != null)
 				return false;

@@ -145,10 +145,10 @@ if (request.getAttribute("books") != null) {
 										     <%}%>
 										</td>
 										
-						          		<td><button type = "button" class="btn btn-primary btn-xs" data-toggle = "modal" data-target = "#updateBookModal" 
-										            href = "AddBookModal.jsp?bookId=<%=book.getBookId() %>" >ADD</button></td>
-										<td><button type = "button" class="btn btn-warning btn-xs" data-toggle = "modal" data-target = "#updateBookModal" 
-										            href = "updateBookModal.jsp?bookId=<%=book.getBookId() %>" >Update</button></td>
+						          		<td><button type = "button" class="btn btn-primary btn-xs" data-toggle = "modal" data-target = "#modifyBookModal" 
+										            href = "#?bookId=<%=book.getBookId() %>" >ADD</button></td>
+										<td><button type = "button" class="btn btn-warning btn-xs" data-toggle = "modal" data-target = "#modifyBookModal" 
+										            href = "updateBookModal.jsp?bookId=<%=book.getBookId() %>">Update</button></td>
 										<%if (book.getBorrowers().size() > 0) {%>
 											<td><button type = "button" class="btn btn-danger btn-xs" disabled>Delete</button></td>
 										<%} else { %>
@@ -163,14 +163,14 @@ if (request.getAttribute("books") != null) {
                             <!-- ADD BOOS BUTTON -->
                             <div class = "container" style = "text-align: center">
 	                            <button type="button" class="btn btn-success btn-lg" data-toggle="modal"
-										data-target="#updateBookModal" href = "addBookModal.jsp">Add New Book</button>
+										data-target="#modifyBookModal" href = "addBookModal.jsp">Add New Book</button>
                             </div>
                         </div>
                     </div>
                 </div>
                 <!-- /.row -->
                 <!-- MODAL WRAPPER -->
-                <div class="modal fade" id="updateBookModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+                <div class="modal fade" id="modifyBookModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
 				  <div class="modal-dialog" role="document">
 				    <div class="modal-content">
 				    </div>

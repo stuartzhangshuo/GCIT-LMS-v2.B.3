@@ -122,6 +122,22 @@ public class AdminService {
 		return null;
 	}
 	
+	public Book readOneBook(Integer bookId) throws SQLException {
+		Connection conn = null;
+		try {
+			conn = util.getConnection();
+			BookDAO bookDao = new BookDAO(conn);
+			return bookDao.readOneBook(bookId);
+		} catch (InstantiationException | IllegalAccessException | ClassNotFoundException | SQLException e) {
+			e.printStackTrace();
+		} finally {
+			if (conn != null) {
+				conn.close();
+			}
+		}
+		return null;
+	}
+	
 	public Publisher readOnePublisher(Integer publisherId) throws SQLException {
 		Connection conn = null;
 		try {
@@ -626,10 +642,7 @@ public class AdminService {
 			}
 		}
 	}
-
 	
-	
-
 	public void updateAuthor(Author author) throws SQLException {
 		Connection conn = null;
 		try {
@@ -652,21 +665,37 @@ public class AdminService {
 			}
 		}
 	}
-
-	public Book readOneBook(Integer bookId) throws SQLException {
+	
+	public void updateBook(Book book) throws SQLException {
 		Connection conn = null;
 		try {
 			conn = util.getConnection();
 			BookDAO bookDao = new BookDAO(conn);
-			return bookDao.readOneBook(bookId);
+			bookDao.updateBook(book);//change name
+			if (book.getAuthors() == null || book.getAuthors().size() == 0) {
+				bookDao.deleteBookAuthor(book);
+			} else {
+				bookDao.deleteBookAuthor(book);
+				bookDao.updateBookAuthor(book);
+			}
+			if (book.getGenres() == null || book.getGenres().size() == 0) {
+				bookDao.deleteBookGenre(book);
+			} else {
+				bookDao.deleteBookGenre(book);
+				bookDao.updateBookGenre(book);
+			}
+			if (book.getPublisher() != null) {
+				bookDao.updateBookPublisher(book);
+			}
+			conn.commit();
 		} catch (InstantiationException | IllegalAccessException | ClassNotFoundException | SQLException e) {
 			e.printStackTrace();
+			conn.rollback();
 		} finally {
 			if (conn != null) {
 				conn.close();
 			}
 		}
-		return null;
 	}
 
 	public Boolean checkGenreName(String genreName) throws SQLException {
@@ -739,6 +768,23 @@ public class AdminService {
 				publisherDao.deleteBookPublisher(publisher);
 				publisherDao.updateBookPublisher(publisher);
 			}
+			conn.commit();
+		} catch (InstantiationException | IllegalAccessException | ClassNotFoundException | SQLException e) {
+			e.printStackTrace();
+			conn.rollback();
+		} finally {
+			if (conn != null) {
+				conn.close();
+			}
+		}
+	}
+
+	public void deleteBook(Book book) throws SQLException {
+		Connection conn = null;
+		try {
+			conn = util.getConnection();
+			BookDAO bookDao = new BookDAO(conn);
+			bookDao.deleteBook(book);
 			conn.commit();
 		} catch (InstantiationException | IllegalAccessException | ClassNotFoundException | SQLException e) {
 			e.printStackTrace();

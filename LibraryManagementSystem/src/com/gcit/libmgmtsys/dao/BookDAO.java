@@ -37,19 +37,44 @@ public class BookDAO extends BaseDAO{
 				new Object[] {book.getTitle(), book.getBookId()});
 	}
 	
-	//update the publisher of a book
-	public void updateBookPublisher(Publisher publisher) throws SQLException {
-		executeUpdate("UPDATE tbl_book SET pubId = ?", new Object[] {publisher.getPublisherId()});
+	public void updateBookAuthor(Book book) throws SQLException {
+		for (Author author : book.getAuthors()) {
+			executeUpdate("INSERT INTO tbl_book_authors VALUES(?, ?)", new Object[] {book.getBookId(), author.getAuthorId()});
+		}
 	}
 	
-	public void updateBookPublisherWithPubId(Integer bookId, Integer pubId) throws SQLException {
-		executeUpdate("UPDATE tbl_book SET pubId = ? WHERE bookId = ?", new Object[] {pubId, bookId});
+	public void updateBookGenre(Book book) throws SQLException {
+		for (Genre genre : book.getGenres()) {
+			executeUpdate("INSERT INTO tbl_book_genres VALUES(?, ?)", new Object[] {genre.getGenreId(), book.getBookId()});
+		}
 	}
+	
+	//update the publisher of a book
+	public void updateBookPublisher(Book book) throws SQLException {
+		executeUpdate("UPDATE tbl_book SET pubId = ? WHERE bookId = ?", 
+				new Object[] {book.getPublisher().getPublisherId(), book.getBookId()});
+	}
+	
+//	public void updateBookPublisherWithPubId(Integer bookId, Integer pubId) throws SQLException {
+//		executeUpdate("UPDATE tbl_book SET pubId = ? WHERE bookId = ?", new Object[] {pubId, bookId});
+//	}
 	
 	//delete an Book from book table
 	public void deleteBook(Book book) throws SQLException {
 		executeUpdate("DELETE FROM tbl_book WHERE bookId = ?",
 				new Object[] {book.getBookId()});
+	}
+	
+	public void deleteBookAuthor(Book book) throws SQLException {
+		executeUpdate("DELETE FROM tbl_book_authors WHERE bookId = ?", new Object[] {book.getBookId()});
+	}
+	
+	public void deleteBookGenre(Book book) throws SQLException {
+		executeUpdate("DELETE FROM tbl_book_genres WHERE bookId = ?", new Object[] {book.getBookId()});
+	}
+	
+	public void deletePublisher(Book book) throws SQLException {
+		executeUpdate("UPDATE tbl_book SET pubId = NULL WHERE bookId = ?", new Object[] {book.getBookId()});
 	}
 	
 	//get all books or all books have a similar title to the input title
