@@ -77,7 +77,7 @@
                         <a href="admin_library_branch.jsp">Manage Library Branches</a>
                     </li>
                     <li>
-                        <a href="#">Manage Borrowers</a>
+                        <a href="admin_borrower.jsp">Manage Borrowers</a>
                     </li>
                     <li>
                         <a href="#">Manage Book Loans</a>

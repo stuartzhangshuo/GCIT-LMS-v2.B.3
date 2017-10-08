@@ -122,6 +122,22 @@ public class AdminService {
 		return null;
 	}
 	
+	public Borrower readOneBorrower(Integer cardNo) throws SQLException {
+		Connection conn = null;
+		try {
+			conn = util.getConnection();
+			BorrowerDAO borrowerDao = new BorrowerDAO(conn);
+			return borrowerDao.readOneBorrower(cardNo);
+		} catch (InstantiationException | IllegalAccessException | ClassNotFoundException | SQLException e) {
+			e.printStackTrace();
+		} finally {
+			if (conn != null) {
+				conn.close();
+			}
+		}
+		return null;
+	}
+	
 	public Book readOneBook(Integer bookId) throws SQLException {
 		Connection conn = null;
 		try {
@@ -399,12 +415,12 @@ public class AdminService {
 //		return null;
 //	}
 	
-	public List<Borrower> readBorrowers(String searchString) throws SQLException {
+	public List<Borrower> readBorrowers(String searchString, Integer pageNo) throws SQLException {
 		Connection conn = null;
 		try {
 			conn = util.getConnection();
 			BorrowerDAO borrowerDao = new BorrowerDAO(conn);
-			return borrowerDao.readBorrowers(searchString);
+			return borrowerDao.readBorrowers(searchString, pageNo);
 		} catch (InstantiationException | IllegalAccessException | ClassNotFoundException | SQLException e) {
 			e.printStackTrace();
 		} finally {
@@ -845,6 +861,76 @@ public class AdminService {
 		}
 		return Boolean.FALSE;
 	}
+
+	public Boolean checkBorrowerName(String borrowerName) throws SQLException {
+		Connection conn = null;
+		try {
+			conn = util.getConnection();
+			BorrowerDAO borrowerDao = new BorrowerDAO(conn);
+			List<Borrower> borrowerWithSameName = borrowerDao.checkBorrowerByName(borrowerName);
+			return borrowerWithSameName != null;
+		} catch (InstantiationException | IllegalAccessException | ClassNotFoundException | SQLException e) {
+			e.printStackTrace();
+		} finally {
+			if (conn != null) {
+				conn.close();
+			}
+		}
+		return Boolean.FALSE;
+	}
+
+	public void addBorrower(Borrower borrower) throws SQLException {
+		Connection conn = null;
+		try {
+			conn = util.getConnection();
+			BorrowerDAO borrowerDao = new BorrowerDAO(conn);
+			if (borrower.getCardNo() == null) {
+				borrowerDao.addBorrower(borrower);
+			} else {
+				//borrowerDao.updateBorrower(borrower);
+			}
+			conn.commit();
+		} catch (InstantiationException | IllegalAccessException | ClassNotFoundException | SQLException e) {
+			e.printStackTrace();
+			conn.rollback();
+		} finally {
+			if (conn != null) {
+				conn.close();
+			}
+		}
+	}
 	
-	
+	public void deleteBorrower(Borrower borrower) throws SQLException {
+		Connection conn = null;
+		try {
+			conn = util.getConnection();
+			BorrowerDAO borrowerDao = new BorrowerDAO(conn);
+			borrowerDao.deleteBorrower(borrower);
+			conn.commit();
+		} catch (InstantiationException | IllegalAccessException | ClassNotFoundException | SQLException e) {
+			e.printStackTrace();
+			conn.rollback();
+		} finally {
+			if (conn != null) {
+				conn.close();
+			}
+		}
+	}
+
+	public void updateBorrower(Borrower borrower) throws SQLException {
+		Connection conn = null;
+		try {
+			conn = util.getConnection();
+			BorrowerDAO borrowerDao = new BorrowerDAO(conn);
+			borrowerDao.updateBorrower(borrower);
+			conn.commit();
+		} catch (InstantiationException | IllegalAccessException | ClassNotFoundException | SQLException e) {
+			e.printStackTrace();
+			conn.rollback();
+		} finally {
+			if (conn != null) {
+				conn.close();
+			}
+		}
+	}
 }

@@ -16,67 +16,48 @@ public class Borrower implements Serializable{
 	private String  address;
 	private String  phone;
 	
-	private List<Book> booksCheckedOut;
-	/**
-	 * @return the cardNo
-	 */
+	private List<BookLoans> bookLoans;
+
 	public Integer getCardNo() {
 		return cardNo;
 	}
-	/**
-	 * @param cardNo the cardNo to set
-	 */
+
 	public void setCardNo(Integer cardNo) {
 		this.cardNo = cardNo;
 	}
-	/**
-	 * @return the name
-	 */
+
 	public String getName() {
 		return name;
 	}
-	/**
-	 * @param name the name to set
-	 */
+
 	public void setName(String name) {
 		this.name = name;
 	}
-	/**
-	 * @return the address
-	 */
+
 	public String getAddress() {
 		return address;
 	}
-	/**
-	 * @param address the address to set
-	 */
+
 	public void setAddress(String address) {
 		this.address = address;
 	}
-	/**
-	 * @return the phone
-	 */
+
 	public String getPhone() {
 		return phone;
 	}
-	/**
-	 * @param phone the phone to set
-	 */
+
 	public void setPhone(String phone) {
 		this.phone = phone;
 	}
-	/**
-	 * @return the booksCheckedOut
-	 */
-	public List<Book> getBooksCheckedOut() {
-		return booksCheckedOut;
+
+	public List<BookLoans> getBookLoans() {
+		return bookLoans;
 	}
-	/**
-	 * @param booksCheckedOut the booksCheckedOut to set
-	 */
-	public void setBooksCheckedOut(List<Book> booksCheckedOut) {
-		this.booksCheckedOut = booksCheckedOut;
+
+	public void setBookLoans(List<BookLoans> bookLoans) {
+		this.bookLoans = bookLoans;
 	}
+
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -85,6 +66,7 @@ public class Borrower implements Serializable{
 		result = prime * result + ((name == null) ? 0 : name.hashCode());
 		return result;
 	}
+
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)
@@ -106,4 +88,5 @@ public class Borrower implements Serializable{
 			return false;
 		return true;
 	}
+	
 }

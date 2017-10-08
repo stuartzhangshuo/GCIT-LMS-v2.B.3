@@ -21,7 +21,7 @@ import com.gcit.libmgmtsys.service.AdminService;
 			 "/addPublisher", "/updatePublisher", "/deletePublisher", "/addLibraryBranch", "/updateLibraryBranch", "/deleteLibraryBranch",
 			 "/addBorrowers", "/updateBorrowers", "/deleteBorrowers", "/overrideBookLoans", 
 			 "/pageAuthors", "/pageGenres", "/pagePublishers", "/pageBooks", "/addBook", "/deleteBook", "/updateBook",
-			 "/pageLibraryBranch"})
+			 "/pageLibraryBranch", "/pageBorrower"})
 public class AdminServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 	
@@ -71,6 +71,11 @@ public class AdminServlet extends HttpServlet {
 				break;
 			case "/deleteLibraryBranch":
 				redirectURL = deleteBranch(request);
+			case "/pageBorrower":
+				redirectURL = pageBorrower(request);
+				break;
+			case "/deleteBorrowers":
+				redirectURL = deleteBorrower(request);
 			default:
 				break;
 		}
@@ -78,6 +83,40 @@ public class AdminServlet extends HttpServlet {
 		rd.forward(request, response);
 	}
 	
+	private String deleteBorrower(HttpServletRequest request) {
+		String redirectURL = "admin_borrower.jsp";
+		String message     = "Borrower deleted Successfully";
+		if (request.getParameter("cardNo") != null) {
+			Integer cardNo = Integer.parseInt(request.getParameter("cardNo"));
+			Borrower borrower = new Borrower();
+			borrower.setCardNo(cardNo);
+			try {
+				adminService.deleteBorrower(borrower);
+			} catch (SQLException e) {
+				e.printStackTrace();
+				message = "Borrower deleted Failed";
+			}
+		} else {
+			message = "Borrower not found, please contact admin.";
+		}
+		request.setAttribute("statusMessage", message);
+		return redirectURL;
+	}
+
+	private String pageBorrower(HttpServletRequest request) {
+		if (request.getParameter("pageNo") != null) {
+			Integer pageNo = Integer.parseInt(request.getParameter("pageNo"));
+			try {
+				request.setAttribute("borrowers", adminService.readBorrowers(null, pageNo));
+				request.setAttribute("currentPageNo", pageNo);
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+			return "admin_borrower.jsp";
+		}
+		return null;
+	}
+
 	private String pageLibraryBranch(HttpServletRequest request) {
 		if (request.getParameter("pageNo") != null) {
 			Integer pageNo = Integer.parseInt(request.getParameter("pageNo"));
@@ -287,8 +326,10 @@ public class AdminServlet extends HttpServlet {
 				redirectURL = updateLibraryBranch(request);
 				break;
 			case "/addBorrowers":
+				redirectURL = addBorrower(request);
 				break;
 			case "/updateBorrowers":
+				redirectURL = updateBorrower(request);
 				break;
 			default:
 				break;
@@ -296,6 +337,8 @@ public class AdminServlet extends HttpServlet {
 		RequestDispatcher rd = request.getRequestDispatcher(redirectURL);
 		rd.forward(request, response);
 	}
+	
+
 	
 
 	private String addAuthor(HttpServletRequest request) {
@@ -384,6 +427,39 @@ public class AdminServlet extends HttpServlet {
 					book.setPublisher(publisher);
 				}
 				adminService.addBook(book);
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+		}
+		request.setAttribute("statusMessage", message);
+		return redirectURL;
+	}
+	
+	private String addBorrower(HttpServletRequest request) {
+		String   message     = "Borrower added successfully!";
+		String   redirectURL = "admin_borrower.jsp";
+		Borrower borrower    = new Borrower();
+		String   borrowerName  = request.getParameter("borrowerName").trim().replaceAll("\\s+", " ");
+		String   borrowerAddress  = request.getParameter("borrowerAddress").trim().replaceAll("\\s+", " ");
+		String   borrowerPhone  = request.getParameter("borrowerPhone").trim().replaceAll("\\s+", " ");
+		Boolean  exist 		 = Boolean.FALSE;
+		try {
+			exist = adminService.checkBorrowerName(borrowerName);
+		} catch (SQLException e1) {
+			e1.printStackTrace();
+		}
+		if (borrowerName == null || borrowerName.length() == 0) {
+			message = "Borrower name can't be empty, please try again.";
+		} else if (exist){
+			message = "Borrower name already exists, please enter a new name.";
+		} else if (borrowerName.length() > 45) {
+			message = "Borrower name can't be more than 45 chars, please try again.";
+		} else {
+			borrower.setName(borrowerName);
+			borrower.setAddress(borrowerAddress);
+			borrower.setPhone(borrowerPhone);
+			try {
+				adminService.addBorrower(borrower);
 			} catch (SQLException e) {
 				e.printStackTrace();
 			}
@@ -488,6 +564,44 @@ public class AdminServlet extends HttpServlet {
 					author.setBooks(books);
 				}
 				adminService.updateAuthor(author);
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+		}
+		request.setAttribute("statusMessage", message);
+		return redirectURL;
+	}
+	
+	private String updateBorrower(HttpServletRequest request) {
+		String   message     = "Borrower updated successfully!";
+		String   redirectURL = "admin_borrower.jsp";
+		Borrower borrower = new Borrower();
+		String   borrowerName = request.getParameter("borrowerName").trim().replaceAll("\\s+", " ");
+		String   borrowerAddress = request.getParameter("borrowerAddress").trim().replaceAll("\\s+", " ");
+		String   borrowerPhone = request.getParameter("borrowerPhone").trim().replaceAll("\\s+", " ");
+		Integer  cardNo = Integer.parseInt(request.getParameter("cardNo"));
+		Boolean  exist 		 = Boolean.FALSE;
+		try {
+			if (!borrowerName.equalsIgnoreCase(request.getParameter("borrowerNameOriginal")) && 
+					adminService.checkBorrowerName(borrowerName)) {
+				exist = Boolean.TRUE;
+			}
+		} catch (SQLException e1) {
+			e1.printStackTrace();
+		}
+		if (borrowerName == null || borrowerName.length() == 0) {
+			message = "Borrower name can't be empty, please try again.";
+		} else if (exist) {
+			message = "Borrower name already exists, please enter a new name.";
+		} else if (borrowerName.length() > 45) {
+			message = "Borrower name can't be more than 45 chars, please try again.";
+		} else {
+			borrower.setCardNo(cardNo);
+			borrower.setName(borrowerName);
+			borrower.setAddress(borrowerAddress);
+			borrower.setPhone(borrowerPhone);
+			try {
+				adminService.updateBorrower(borrower);
 			} catch (SQLException e) {
 				e.printStackTrace();
 			}
