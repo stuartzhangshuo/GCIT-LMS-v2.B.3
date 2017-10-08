@@ -77,21 +77,14 @@ public class Borrower implements Serializable{
 	public void setBooksCheckedOut(List<Book> booksCheckedOut) {
 		this.booksCheckedOut = booksCheckedOut;
 	}
-	/* (non-Javadoc)
-	 * @see java.lang.Object#hashCode()
-	 */
 	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + ((address == null) ? 0 : address.hashCode());
 		result = prime * result + ((cardNo == null) ? 0 : cardNo.hashCode());
 		result = prime * result + ((name == null) ? 0 : name.hashCode());
 		return result;
 	}
-	/* (non-Javadoc)
-	 * @see java.lang.Object#equals(java.lang.Object)
-	 */
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)
@@ -101,11 +94,6 @@ public class Borrower implements Serializable{
 		if (getClass() != obj.getClass())
 			return false;
 		Borrower other = (Borrower) obj;
-		if (address == null) {
-			if (other.address != null)
-				return false;
-		} else if (!address.equals(other.address))
-			return false;
 		if (cardNo == null) {
 			if (other.cardNo != null)
 				return false;

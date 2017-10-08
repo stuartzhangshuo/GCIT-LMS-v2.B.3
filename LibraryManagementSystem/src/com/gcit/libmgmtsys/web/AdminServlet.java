@@ -20,7 +20,8 @@ import com.gcit.libmgmtsys.service.AdminService;
 @WebServlet({"/addAuthor",    "/updateAuthor",    "/deleteAuthor",    "/addGenre", 		   "/updateGenre", 		   "/deleteGenre",
 			 "/addPublisher", "/updatePublisher", "/deletePublisher", "/addLibraryBranch", "/updateLibraryBranch", "/deleteLibraryBranch",
 			 "/addBorrowers", "/updateBorrowers", "/deleteBorrowers", "/overrideBookLoans", 
-			 "/pageAuthors", "/pageGenres", "/pagePublishers", "/pageBooks", "/addBook", "/deleteBook", "/updateBook"})
+			 "/pageAuthors", "/pageGenres", "/pagePublishers", "/pageBooks", "/addBook", "/deleteBook", "/updateBook",
+			 "/pageLibraryBranch"})
 public class AdminServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 	
@@ -65,8 +66,11 @@ public class AdminServlet extends HttpServlet {
 			case "/deletePublisher":
 				redirectURL = deletePublisher(request);
 				break;
-			case "/deleteBranch":
-				redirectURL = deleteBranch(request, redirectURL);
+			case "/pageLibraryBranch":
+				redirectURL = pageLibraryBranch(request);
+				break;
+			case "/deleteLibraryBranch":
+				redirectURL = deleteBranch(request);
 			default:
 				break;
 		}
@@ -74,6 +78,20 @@ public class AdminServlet extends HttpServlet {
 		rd.forward(request, response);
 	}
 	
+	private String pageLibraryBranch(HttpServletRequest request) {
+		if (request.getParameter("pageNo") != null) {
+			Integer pageNo = Integer.parseInt(request.getParameter("pageNo"));
+			try {
+				request.setAttribute("libraryBranches", adminService.readLibraryBranches(null, pageNo));
+				request.setAttribute("currentPageNo", pageNo);
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+			return "admin_library_branch.jsp";
+		}
+		return null;
+	}
+
 	private String pageAuthors(HttpServletRequest request) {
 		if (request.getParameter("pageNo") != null) {
 			Integer pageNo = Integer.parseInt(request.getParameter("pageNo"));
@@ -210,9 +228,9 @@ public class AdminServlet extends HttpServlet {
 		return redirectURL;
 	}
 	
-	private String deleteBranch(HttpServletRequest request, String redirectURL) {
+	private String deleteBranch(HttpServletRequest request) {
 		String message = "Branch deleted Successfully";
-		redirectURL = "admin_manage_library.jsp";
+		String redirectURL = "admin_library_branch.jsp";
 		if (request.getParameter("branchId") != null) {
 			Integer branchId = Integer.parseInt(request.getParameter("branchId"));
 			LibraryBranch branch = new LibraryBranch();
@@ -223,12 +241,12 @@ public class AdminServlet extends HttpServlet {
 				e.printStackTrace();
 				message = "Branch deleted Failed";
 			}
+		} else {
+			message = "Library branch not found, please contact admin.";
 		}
 		request.setAttribute("statusMessage", message);
 		return redirectURL;
 	}
-	
-	
 	
 	/**
 	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
@@ -263,9 +281,10 @@ public class AdminServlet extends HttpServlet {
 				redirectURL = updatePublisher(request);
 				break;
 			case "/addLibraryBranch":
-				redirectURL = addBranch(request, redirectURL, true);
+				redirectURL = addLibraryBranch(request);
+				break;
 			case "/updateLibraryBranch":
-				redirectURL = updateBranchInfo(request, redirectURL);
+				redirectURL = updateLibraryBranch(request);
 				break;
 			case "/addBorrowers":
 				break;
@@ -608,6 +627,42 @@ public class AdminServlet extends HttpServlet {
 		return redirectURL;
 	}
 	
+	private String updateLibraryBranch(HttpServletRequest request) {
+		String    message           = "Branch info updated successfully!";
+		String    redirectURL       = "admin_library_branch.jsp";
+		LibraryBranch libraryBranch = new LibraryBranch();
+		String	  branchName	    = request.getParameter("branchName").trim().replaceAll("\\s+", " ");
+		String	  branchAddress     = request.getParameter("branchAddress").trim().replaceAll("\\s+", " ");
+		Integer	  branchId	   		= Integer.parseInt(request.getParameter("branchId"));
+		Boolean   exist 	        = Boolean.FALSE;
+		try {
+			if (!branchName.equalsIgnoreCase(request.getParameter("branchNameOriginal")) && 
+					adminService.checkBranchName(branchName)) {
+				exist = Boolean.TRUE;
+			}
+		} catch (SQLException e1) {
+			e1.printStackTrace();
+		}
+		if (branchName == null || branchName.length() == 0) {
+			message = "Branch name can't be empty, please try again.";
+		} else if (exist){
+			message = "Branch name already exists, please enter a new name.";
+		} else if (branchName.length() > 45) {
+			message = "Branch name can't be more than 45 chars, please try again.";
+		} else {
+			libraryBranch.setBranchId(branchId);
+			libraryBranch.setBranchName(branchName);
+			libraryBranch.setBranchAddress(branchAddress);
+			try {
+				adminService.updateLibraryBranch(libraryBranch);
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+		}
+		request.setAttribute("statusMessage", message);
+		return redirectURL;
+	}
+	
 	private String addPublisher(HttpServletRequest request) {
 		String    message          = "Publisher added successfully!";
 		String    redirectURL      = "admin_publisher.jsp";
@@ -652,58 +707,59 @@ public class AdminServlet extends HttpServlet {
 		return redirectURL;
 	}
 	
-
-	private String addBranch(HttpServletRequest request, String redirectURL, boolean isNew) {
-		String message    = "Branch added successfully!";
-		String branchName = request.getParameter("branchName");
-		String branchAddress = request.getParameter("branchAddress");
-		LibraryBranch branch = new LibraryBranch();
-		
-		if (branchName != null && !branchName.isEmpty()) {
-			if (branchName.length() > 45) {
-				message = "branch name cannot be more than 45 chars";
-				redirectURL = "admin_manage_library.jsp";
-			} else {
-				if (!isNew) {
-					branch.setBranchId(Integer.parseInt(request.getParameter("branchId")));
-				}
-				branch.setBranchName(branchName);
-				branch.setBranchAddress(branchAddress);
-				try {
-					adminService.addLibraryBranch(branch);
-				} catch (SQLException e) {
-					e.printStackTrace();
-				}
-				redirectURL = "admin_manage_library.jsp";
-			}
-		} else {
-			message = "Publisher name cannot be empty!";
-			redirectURL = "admin_manage_library.jsp";
-		}
-		request.setAttribute("statusMessage", message);
-		return redirectURL;
-	}
-
-	private String updateBranchInfo(HttpServletRequest request, String redirectURL) {
-		String message       = "Branch info updated successfully!";
-		String branchId      = request.getParameter("branchId");
-		System.out.println(branchId);
-		String branchName    = request.getParameter("branchName");
-		System.out.println(branchName);
-		String branchAddress = request.getParameter("branchAddress");
-		System.out.println(branchAddress);
-		LibraryBranch branch = new LibraryBranch();
-		branch.setBranchName(branchName);
-		branch.setBranchAddress(branchAddress);
-		branch.setBranchId(Integer.parseInt(branchId));
-		redirectURL = "librarian_branch_info.jsp";
+	private String addLibraryBranch(HttpServletRequest request) {
+		String    message           = "Library Branch added successfully!";
+		String    redirectURL       = "admin_library_branch.jsp";
+		LibraryBranch libraryBranch = new LibraryBranch();
+		String 	  branchName 	    = request.getParameter("branchName").trim().replaceAll("\\s+", " ");
+		String	  branchAddress     = request.getParameter("branchAddress").trim().replaceAll("\\s+", " ");
+		Integer   noOfCopies	    = Integer.parseInt(request.getParameter("noOfCopies").trim().replaceAll("\\s+", " "));
+		String[]  bookIds           = request.getParameterValues("bookIds");
+		Boolean   exist 	        = Boolean.FALSE;
+		Boolean   addBooks			= Boolean.TRUE;
 		try {
-			adminService.updateLibraryBranch(branch);
-		} catch (SQLException e) {
-			e.printStackTrace();
+			exist = adminService.checkBranchName(branchName);
+		} catch (SQLException e1) {
+			e1.printStackTrace();
+		}
+		if (branchName == null || branchName.length() == 0) {
+			message = "Branch name can't be empty, please try again.";
+		} else if (exist){
+			message = "Branch name already exists, please enter a new name.";
+		} else if (branchName.length() > 45) {
+			message = "Branch name can't be more than 45 chars, please try again.";
+		} else {
+			libraryBranch.setBranchName(branchName);
+			libraryBranch.setBranchAddress(branchAddress);
+			if (noOfCopies == 0 || bookIds == null || bookIds.length == 0) {
+				addBooks = Boolean.FALSE;
+			}
+			try {
+				if (bookIds != null && bookIds.length != 0) {
+					List<BookCopies> bookCopies = new ArrayList<>();
+					for (String bookId : bookIds) {
+						BookCopies bookCopy = new BookCopies();
+						//container for branchId;
+						LibraryBranch branch = new LibraryBranch();
+						bookCopy.setLibraryBranch(branch);
+						//container for bookId;
+						Book book = new Book();
+						book.setBookId(Integer.parseInt(bookId));
+						bookCopy.setBook(book);
+						//set No. of copies.
+						bookCopy.setNoOfCopies(noOfCopies);
+						//add to list.
+						bookCopies.add(bookCopy);
+					}
+					libraryBranch.setBookCopies(bookCopies);
+				}
+				adminService.addLibraryBranch(libraryBranch, addBooks);
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+			
 		}
 		request.setAttribute("statusMessage", message);
 		return redirectURL;
 	}
-	
 }

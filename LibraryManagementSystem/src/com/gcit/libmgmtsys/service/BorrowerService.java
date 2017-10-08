@@ -66,20 +66,20 @@ public class BorrowerService {
 //		return null;
 //	}
 	
-	public List<BookLoans> readBookLoansByCardNoAndBranchId(String cardNo, String branchId) throws SQLException {
-		Connection conn = null;
-		try {
-			conn = util.getConnection();
-			BookLoansDAO bookLoansDao = new BookLoansDAO(conn);
-			return bookLoansDao.readBookLoans(cardNo, branchId);
-		} catch (InstantiationException | IllegalAccessException | ClassNotFoundException | SQLException e) {
-			e.printStackTrace();
-		} finally {
-			if (conn != null) {
-				conn.close();
-			}
-		}
-		return null;
-	}
+//	public List<BookLoans> readBookLoansByCardNoAndBranchId(String cardNo, String branchId) throws SQLException {
+//		Connection conn = null;
+//		try {
+//			conn = util.getConnection();
+//			BookLoansDAO bookLoansDao = new BookLoansDAO(conn);
+//			return bookLoansDao.readBookLoans(cardNo, branchId);
+//		} catch (InstantiationException | IllegalAccessException | ClassNotFoundException | SQLException e) {
+//			e.printStackTrace();
+//		} finally {
+//			if (conn != null) {
+//				conn.close();
+//			}
+//		}
+//		return null;
+//	}
 
 }

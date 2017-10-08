@@ -51,29 +51,29 @@ public class LibrarianService {
 		}
 	}
 	
-	public List<LibraryBranch> readAllBranches() throws SQLException {
-		Connection conn = null;
-		try {
-			conn = util.getConnection();
-			LibraryBranchDAO libraryBranchDao = new LibraryBranchDAO(conn);
-			return libraryBranchDao.getLibraryBranches(null);
-		} catch (InstantiationException | IllegalAccessException | ClassNotFoundException | SQLException e) {
-			e.printStackTrace();
-			conn.rollback();
-		} finally {
-			if (conn != null) {
-				conn.close();
-			}
-		}
-		return null;
-	}
+//	public List<LibraryBranch> readAllBranches() throws SQLException {
+//		Connection conn = null;
+//		try {
+//			conn = util.getConnection();
+//			LibraryBranchDAO libraryBranchDao = new LibraryBranchDAO(conn);
+//			return libraryBranchDao.readLibraryBranches(null);
+//		} catch (InstantiationException | IllegalAccessException | ClassNotFoundException | SQLException e) {
+//			e.printStackTrace();
+//			conn.rollback();
+//		} finally {
+//			if (conn != null) {
+//				conn.close();
+//			}
+//		}
+//		return null;
+//	}
 	
 	public LibraryBranch readOneBranch(Integer branchId) throws SQLException {
 		Connection conn = null;
 		try {
 			conn = util.getConnection();
 			LibraryBranchDAO branchDao = new LibraryBranchDAO(conn);
-			return branchDao.getLibraryBranch(branchId);
+			return branchDao.readOneBranch(branchId);
 		} catch (InstantiationException | IllegalAccessException | ClassNotFoundException | SQLException e) {
 			e.printStackTrace();
 		} finally {
@@ -89,7 +89,7 @@ public class LibrarianService {
 		try {
 			conn = util.getConnection();
 			LibraryBranchDAO libraryBranchDao = new LibraryBranchDAO(conn);
-			return libraryBranchDao.getLibraryBranch(branchId);
+			return libraryBranchDao.readOneBranch(branchId);
 		} catch (InstantiationException | IllegalAccessException | ClassNotFoundException | SQLException e) {
 			e.printStackTrace();
 		} finally {

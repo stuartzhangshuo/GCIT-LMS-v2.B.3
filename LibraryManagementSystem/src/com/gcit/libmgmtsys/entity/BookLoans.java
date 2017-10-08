@@ -10,139 +10,74 @@ public class BookLoans implements Serializable{
 	
 	private static final long serialVersionUID = 1880265167738841075L;
 	
-	private Integer bookId;
-	private Integer branchId;
-	private Integer cardNo;
-	private String  bookTitle;
-	private String  branchName;
-	private String  borrowerName;
+	private Borrower 	  borrower;
+	private LibraryBranch libraryBranch;
+	private Book 		  book;
+	
 	private String	dateOut;
 	private String  dueDate;
 	private String  dateIn;
-	/**
-	 * @return the bookId
-	 */
-	public int getBookId() {
-		return bookId;
+	
+	
+	public Borrower getBorrower() {
+		return borrower;
 	}
-	/**
-	 * @param bookId the bookId to set
-	 */
-	public void setBookId(Integer bookId) {
-		this.bookId = bookId;
+	
+	public void setBorrower(Borrower borrower) {
+		this.borrower = borrower;
 	}
-	/**
-	 * @return the branchId
-	 */
-	public Integer getBranchId() {
-		return branchId;
+	
+	public LibraryBranch getLibraryBranch() {
+		return libraryBranch;
 	}
-	/**
-	 * @param branchId the branchId to set
-	 */
-	public void setBranchId(Integer branchId) {
-		this.branchId = branchId;
+	
+	public void setLibraryBranch(LibraryBranch libraryBranch) {
+		this.libraryBranch = libraryBranch;
 	}
-	/**
-	 * @return the cardNo
-	 */
-	public Integer getCardNo() {
-		return cardNo;
+	
+	public Book getBook() {
+		return book;
 	}
-	/**
-	 * @param cardNo the cardNo to set
-	 */
-	public void setCardNo(Integer cardNo) {
-		this.cardNo = cardNo;
+	
+	public void setBook(Book book) {
+		this.book = book;
 	}
-	/**
-	 * @return the dateOut
-	 */
+	
 	public String getDateOut() {
 		return dateOut;
 	}
-	/**
-	 * @param dateOut the dateOut to set
-	 */
+	
 	public void setDateOut(String dateOut) {
 		this.dateOut = dateOut;
 	}
-	/**
-	 * @return the dueDate
-	 */
+	
 	public String getDueDate() {
 		return dueDate;
 	}
-	/**
-	 * @param dueDate the dueDate to set
-	 */
+	
 	public void setDueDate(String dueDate) {
 		this.dueDate = dueDate;
 	}
-	/**
-	 * @return the dateIn
-	 */
+	
 	public String getDateIn() {
 		return dateIn;
 	}
-	/**
-	 * @param dateIn the dateIn to set
-	 */
+	
 	public void setDateIn(String dateIn) {
 		this.dateIn = dateIn;
 	}
-	/**
-	 * @return the bookTitle
-	 */
-	public String getBookTitle() {
-		return bookTitle;
-	}
-	/**
-	 * @param bookTitle the bookTitle to set
-	 */
-	public void setBookTitle(String bookTitle) {
-		this.bookTitle = bookTitle;
-	}
-	/**
-	 * @return the branchName
-	 */
-	public String getBranchName() {
-		return branchName;
-	}
-	/**
-	 * @param branchName the branchName to set
-	 */
-	public void setBranchName(String branchName) {
-		this.branchName = branchName;
-	}
-	/**
-	 * @return the borrowerName
-	 */
-	public String getBorrowerName() {
-		return borrowerName;
-	}
-	/**
-	 * @param borrowerName the borrowerName to set
-	 */
-	public void setBorrowerName(String borrowerName) {
-		this.borrowerName = borrowerName;
-	}
-	/* (non-Javadoc)
-	 * @see java.lang.Object#hashCode()
-	 */
+
 	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + ((bookId == null) ? 0 : bookId.hashCode());
-		result = prime * result + ((branchId == null) ? 0 : branchId.hashCode());
-		result = prime * result + ((cardNo == null) ? 0 : cardNo.hashCode());
-		result = prime * result + ((dateIn == null) ? 0 : dateIn.hashCode());
+		result = prime * result + ((book == null) ? 0 : book.hashCode());
+		result = prime * result + ((borrower == null) ? 0 : borrower.hashCode());
+		result = prime * result + ((dateOut == null) ? 0 : dateOut.hashCode());
+		result = prime * result + ((libraryBranch == null) ? 0 : libraryBranch.hashCode());
 		return result;
 	}
-	/* (non-Javadoc)
-	 * @see java.lang.Object#equals(java.lang.Object)
-	 */
+
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)
@@ -152,25 +87,25 @@ public class BookLoans implements Serializable{
 		if (getClass() != obj.getClass())
 			return false;
 		BookLoans other = (BookLoans) obj;
-		if (bookId == null) {
-			if (other.bookId != null)
+		if (book == null) {
+			if (other.book != null)
 				return false;
-		} else if (!bookId.equals(other.bookId))
+		} else if (!book.equals(other.book))
 			return false;
-		if (branchId == null) {
-			if (other.branchId != null)
+		if (borrower == null) {
+			if (other.borrower != null)
 				return false;
-		} else if (!branchId.equals(other.branchId))
+		} else if (!borrower.equals(other.borrower))
 			return false;
-		if (cardNo == null) {
-			if (other.cardNo != null)
+		if (dateOut == null) {
+			if (other.dateOut != null)
 				return false;
-		} else if (!cardNo.equals(other.cardNo))
+		} else if (!dateOut.equals(other.dateOut))
 			return false;
-		if (dateIn == null) {
-			if (other.dateIn != null)
+		if (libraryBranch == null) {
+			if (other.libraryBranch != null)
 				return false;
-		} else if (!dateIn.equals(other.dateIn))
+		} else if (!libraryBranch.equals(other.libraryBranch))
 			return false;
 		return true;
 	}

@@ -195,6 +195,15 @@ public class BookDAO extends BaseDAO{
 		return null;
 	}
 	
+	public Book readOneBookFirstLevel(Integer bookId) throws SQLException {
+		List<Book> books = executeFirstLevelQuery("SELECT * FROM tbl_book WHERE bookId = ?", 
+				new Object[] {bookId});
+		if (books != null) {
+			return books.get(0);
+		}
+		return null;
+	}
+	
 	public List<Book> checkBookByName(String title) throws SQLException {
 		List<Book> books = executeQuery("SELECT * FROM tbl_book WHERE title = ?", 
 				new Object[] {title});

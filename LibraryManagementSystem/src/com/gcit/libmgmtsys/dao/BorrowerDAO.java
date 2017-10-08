@@ -7,6 +7,7 @@ package com.gcit.libmgmtsys.dao;
 import java.sql.*;
 import java.util.*;
 
+import com.gcit.libmgmtsys.entity.Book;
 import com.gcit.libmgmtsys.entity.Borrower;
 
 @SuppressWarnings({"unchecked", "rawtypes"})
@@ -81,6 +82,15 @@ public class BorrowerDAO extends BaseDAO{
 			borrowers.add(borrower);
 		}
 		return borrowers;
+	}
+
+	public Borrower readOneBorrowerFirstLevel(Integer cardNo) throws SQLException {
+		List<Borrower> borrowers = executeFirstLevelQuery("SELECT * FROM tbl_borrower WHERE cardNo = ?", 
+				new Object[] {cardNo});
+		if (borrowers != null) {
+			return borrowers.get(0);
+		}
+		return null;
 	}
 
 	

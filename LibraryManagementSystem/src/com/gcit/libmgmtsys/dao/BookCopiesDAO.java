@@ -7,7 +7,9 @@ package com.gcit.libmgmtsys.dao;
 import java.sql.*;
 import java.util.*;
 
+import com.gcit.libmgmtsys.entity.Book;
 import com.gcit.libmgmtsys.entity.BookCopies;
+import com.gcit.libmgmtsys.entity.LibraryBranch;
 
 @SuppressWarnings({"unchecked", "rawtypes"})
 public class BookCopiesDAO extends BaseDAO{
@@ -19,15 +21,16 @@ public class BookCopiesDAO extends BaseDAO{
 	//insert a book copies association
 	public void addBookCopies(BookCopies bookCopies) throws SQLException {
 		executeUpdate("INSERT INTO tbl_book_copies (bookId, branchId, noOfCopies) VALUES(?, ?, ?)",
-				new Object[] {bookCopies.getBookId(), bookCopies.getBranchId(), bookCopies.getNoOfCopies()});
+				new Object[] {bookCopies.getBook().getBookId(), bookCopies.getLibraryBranch().getBranchId(), bookCopies.getNoOfCopies()});
 	}
 	
 	//update a book copies association
 	public void updateBookCopies(BookCopies bookCopies) throws SQLException {
 		executeUpdate("UPDATE tbl_book_copies SET noOfCopies = ? WHERE bookId = ? AND branchId = ?",
-				new Object[] {bookCopies.getNoOfCopies(), bookCopies.getBookId(), bookCopies.getBranchId()});
+				new Object[] {bookCopies.getNoOfCopies(), bookCopies.getBook().getBookId(), bookCopies.getLibraryBranch().getBranchId()});
 	}
 	
+	//return total number of copies for a book in all libraries.
 	public List<BookCopies> getNoOfCopies(Integer bookId) throws SQLException {
 		return executeQuery("SELECT bookId, branchId, sum(noOfCopies) as noOfCopies FROM tbl_book_copies WHERE bookId = ?", 
 				new Object[] {bookId});
@@ -38,8 +41,17 @@ public class BookCopiesDAO extends BaseDAO{
 		List<BookCopies> bookCopies = new ArrayList<>();
 		while (rs.next()) {
 			BookCopies bookCopy = new BookCopies();
-			bookCopy.setBookId(rs.getInt("bookId"));
-			bookCopy.setBranchId(rs.getInt("branchId"));
+			
+			Book 		  	 book 		   	  = new Book();
+			LibraryBranch 	 libraryBranch 	  = new LibraryBranch();
+			BookDAO 		 bookDao 	      = new BookDAO(conn);
+			LibraryBranchDAO libraryBranchDao = new LibraryBranchDAO(conn);
+			
+			book 		  = bookDao.readOneBookFirstLevel(rs.getInt("bookId"));
+			libraryBranch = libraryBranchDao.readOneLibrayBranchFirstLevel(rs.getInt("branchId"));
+			
+			bookCopy.setBook(book);
+			bookCopy.setLibraryBranch(libraryBranch);
 			bookCopy.setNoOfCopies(rs.getInt("noOfCopies"));
 			bookCopies.add(bookCopy);
 		}
@@ -48,8 +60,15 @@ public class BookCopiesDAO extends BaseDAO{
 
 	@Override
 	protected List parseData(ResultSet rs) throws SQLException {
-		// TODO Auto-generated method stub
-		return null;
+		List<BookCopies> bookCopies = new ArrayList<>();
+		while (rs.next()) {
+			BookCopies bookCopy = new BookCopies();
+			bookCopy.getBook().setBookId(rs.getInt("bookId"));
+			bookCopy.getLibraryBranch().setBranchId(rs.getInt("branchId"));
+			bookCopy.setNoOfCopies(rs.getInt("noOfCopies"));
+			bookCopies.add(bookCopy);
+		}
+		return bookCopies;
 	}
 
 }
