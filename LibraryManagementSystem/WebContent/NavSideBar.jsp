@@ -80,7 +80,7 @@
                         <a href="admin_borrower.jsp">Manage Borrowers</a>
                     </li>
                     <li>
-                        <a href="#">Manage Book Loans</a>
+                        <a href="admin_book_loans.jsp">Manage Book Loans</a>
                     </li>
                 </ul>
             </li>

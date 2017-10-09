@@ -19,9 +19,9 @@ import com.gcit.libmgmtsys.service.AdminService;
  */
 @WebServlet({"/addAuthor",    "/updateAuthor",    "/deleteAuthor",    "/addGenre", 		   "/updateGenre", 		   "/deleteGenre",
 			 "/addPublisher", "/updatePublisher", "/deletePublisher", "/addLibraryBranch", "/updateLibraryBranch", "/deleteLibraryBranch",
-			 "/addBorrowers", "/updateBorrowers", "/deleteBorrowers", "/overrideBookLoans", 
+			 "/addBorrowers", "/updateBorrowers", "/deleteBorrowers", "/updateBookLoan", 
 			 "/pageAuthors", "/pageGenres", "/pagePublishers", "/pageBooks", "/addBook", "/deleteBook", "/updateBook",
-			 "/pageLibraryBranch", "/pageBorrower"})
+			 "/pageLibraryBranch", "/pageBorrower", "/pageBookLoan", "/deleteBookLoan"})
 public class AdminServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 	
@@ -76,6 +76,16 @@ public class AdminServlet extends HttpServlet {
 				break;
 			case "/deleteBorrowers":
 				redirectURL = deleteBorrower(request);
+				break;
+			case "/pageBookLoan":
+				redirectURL = pageBookLoan(request);
+				break;
+			case "/deleteBookLoan":
+				redirectURL = deleteBookLoan(request);
+				break;
+			case "/updateBookLoan":
+				redirectURL = updateBookLoan(request);
+				break;
 			default:
 				break;
 		}
@@ -83,6 +93,78 @@ public class AdminServlet extends HttpServlet {
 		rd.forward(request, response);
 	}
 	
+	private String updateBookLoan(HttpServletRequest request) {
+		String redirectURL = "admin_book_loans.jsp";
+		String message     = "Book Loan update Successfully";
+		if (request.getParameter("bookId") != null && request.getParameter("branchId") != null
+				&& request.getParameter("cardNo") != null && request.getParameter("dateOut") != null) {
+			Integer bookId   = Integer.parseInt(request.getParameter("bookId"));
+			Integer branchId = Integer.parseInt(request.getParameter("branchId"));
+			Integer cardNo   = Integer.parseInt(request.getParameter("cardNo"));
+			String  dateOut  = request.getParameter("dateOut");
+			//entities
+			BookLoans 	  bookLoan = new BookLoans();
+			Book 	  	  book 	   = new Book();
+			LibraryBranch branch   = new LibraryBranch();
+			Borrower 	  borrower = new Borrower();
+			//setup each entity
+			book.setBookId(bookId);
+			branch.setBranchId(branchId);
+			borrower.setCardNo(cardNo);
+			//setup book loan
+			bookLoan.setBook(book);
+			bookLoan.setLibraryBranch(branch);
+			bookLoan.setBorrower(borrower);
+			bookLoan.setDateOut(dateOut);
+			try {
+				adminService.updateBookLoan(bookLoan);
+			} catch (SQLException e) {
+				e.printStackTrace();
+				message = "Book loan update Failed";
+			}
+		} else {
+			message = "Book Loan not found, please contact admin.";
+		}
+		request.setAttribute("statusMessage", message);
+		return redirectURL;
+	}
+
+	private String deleteBookLoan(HttpServletRequest request) {
+		String redirectURL = "admin_book_loans.jsp";
+		String message     = "Book Loan deleted Successfully";
+		if (request.getParameter("bookId") != null && request.getParameter("branchId") != null
+				&& request.getParameter("cardNo") != null && request.getParameter("dateOut") != null) {
+			Integer bookId   = Integer.parseInt(request.getParameter("bookId"));
+			Integer branchId = Integer.parseInt(request.getParameter("branchId"));
+			Integer cardNo   = Integer.parseInt(request.getParameter("cardNo"));
+			String  dateOut  = request.getParameter("dateOut");
+			//entities
+			BookLoans 	  bookLoan = new BookLoans();
+			Book 	  	  book 	   = new Book();
+			LibraryBranch branch   = new LibraryBranch();
+			Borrower 	  borrower = new Borrower();
+			//setup each entity
+			book.setBookId(bookId);
+			branch.setBranchId(branchId);
+			borrower.setCardNo(cardNo);
+			//setup book loan
+			bookLoan.setBook(book);
+			bookLoan.setLibraryBranch(branch);
+			bookLoan.setBorrower(borrower);
+			bookLoan.setDateOut(dateOut);
+			try {
+				adminService.deleteBookLoan(bookLoan);
+			} catch (SQLException e) {
+				e.printStackTrace();
+				message = "Book loan deleted Failed";
+			}
+		} else {
+			message = "Book Loan not found, please contact admin.";
+		}
+		request.setAttribute("statusMessage", message);
+		return redirectURL;
+	}
+
 	private String deleteBorrower(HttpServletRequest request) {
 		String redirectURL = "admin_borrower.jsp";
 		String message     = "Borrower deleted Successfully";
@@ -141,6 +223,20 @@ public class AdminServlet extends HttpServlet {
 				e.printStackTrace();
 			}
 			return "admin_author.jsp";
+		}
+		return null;
+	}
+	
+	private String pageBookLoan(HttpServletRequest request) {
+		if (request.getParameter("pageNo") != null) {
+			Integer pageNo = Integer.parseInt(request.getParameter("pageNo"));
+			try {
+				request.setAttribute("bookLoans", adminService.readBookLoans(null, pageNo));
+				request.setAttribute("currentPageNo", pageNo);
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+			return "admin_book_loans.jsp";
 		}
 		return null;
 	}

@@ -7,6 +7,7 @@ package com.gcit.libmgmtsys.dao;
 import java.sql.*;
 import java.util.*;
 
+import com.gcit.libmgmtsys.entity.Author;
 import com.gcit.libmgmtsys.entity.Book;
 import com.gcit.libmgmtsys.entity.BookLoans;
 import com.gcit.libmgmtsys.entity.Borrower;
@@ -129,5 +130,31 @@ public class BookLoansDAO extends BaseDAO{
 			bookLoans.add(bookLoan);
 		}
 		return bookLoans;
+	}
+
+	public Integer getBookLoansCount() throws SQLException {
+		return getCount("SELECT COUNT(*) as COUNT FROM tbl_book_loans", null);
+	}
+
+	public void deleteBookLoan(BookLoans bookLoan) throws SQLException {
+		executeUpdate("DELETE FROM tbl_book_loans WHERE bookId = ? AND branchId = ? AND cardNo = ? AND dateOut = ?",
+				new Object[] {bookLoan.getBook().getBookId(), bookLoan.getLibraryBranch().getBranchId(),
+							  bookLoan.getBorrower().getCardNo(), bookLoan.getDateOut()});
+	}
+
+	public BookLoans readOneBookLoan(BookLoans bookLoan) throws SQLException {
+		List<BookLoans> bookLoans = executeQuery("SELECT * FROM tbl_book_loans WHERE bookId = ? AND branchId = ? AND cardNo = ? AND dateOut = ?", 
+				new Object[] {bookLoan.getBook().getBookId(), bookLoan.getLibraryBranch().getBranchId(),
+						  bookLoan.getBorrower().getCardNo(), bookLoan.getDateOut()});
+		if (bookLoans != null) {
+			return bookLoans.get(0);
+		}
+		return null;
+	}
+
+	public void updateBookLoan(BookLoans bookLoan) throws SQLException {
+		executeUpdate("UPDATE tbl_book_loans SET dueDate = DATE_ADD(dueDate, INTERVAL 7 DAY) WHERE bookId = ? AND branchId = ? AND cardNo = ? AND dateOut = ?",
+				new Object[] {bookLoan.getBook().getBookId(), bookLoan.getLibraryBranch().getBranchId(),
+							  bookLoan.getBorrower().getCardNo(), bookLoan.getDateOut()});
 	}
 }
