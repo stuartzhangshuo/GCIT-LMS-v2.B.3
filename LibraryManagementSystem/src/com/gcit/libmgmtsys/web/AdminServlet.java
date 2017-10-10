@@ -52,6 +52,7 @@ public class AdminServlet extends HttpServlet {
 				redirectURL = pageGenres(request);
 				break;
 			case "/pageBooks":
+				System.out.println("entered");
 				redirectURL = pageBooks(request);
 				break;
 			case "/deleteBook":
@@ -299,6 +300,7 @@ public class AdminServlet extends HttpServlet {
 		if (request.getParameter("pageNo") != null) {
 			Integer pageNo = Integer.parseInt(request.getParameter("pageNo"));
 			try {
+				System.out.println("entered.");
 				request.setAttribute("books", adminService.readBooks(null, pageNo));
 				request.setAttribute("currentPageNo", pageNo);
 			} catch (SQLException e) {

@@ -51,10 +51,10 @@
                 <a href="javascript:;" data-toggle="collapse" data-target="#borrower"><i class="fa fa-fw fa-arrows-v"></i> Borrower <i class="fa fa-fw fa-caret-down"></i></a>
                 <ul id="borrower" class="collapse">
                     <li>
-                        <a href="#">Check-Out Books</a>
+                        <a data-toggle = "modal" data-target = "#branchSelection" href = "borrower_checkOut_modal.jsp">Check-Out Books</a>
                     </li>
                     <li>
-                        <a href="#">Check-In Books</a>
+                        <a data-toggle = "modal" data-target = "#branchSelection" href = "borrower_checkIn_modal.jsp">Check-In Books</a>
                     </li>
                 </ul>
             </li>
@@ -91,3 +91,10 @@
     </div>
     <!-- /.navbar-collapse -->
 </nav>
+ <!-- MODAL WRAPPER FOR BRANCH SELECTION-->
+<div class="modal fade" id="branchSelection" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+	<div class="modal-dialog" role="document">
+	    <div class="modal-content">
+	    </div>
+	</div>
+</div>

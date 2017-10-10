@@ -73,7 +73,6 @@ public abstract class BaseDAO<T> {
 		if (getPageNo() != null) {
 			Integer index = (getPageNo() - 1) * getPageSize();
 			sql += " LIMIT " + index + ", " + getPageSize();
-			//System.out.println(sql);
 		}
 		PreparedStatement pstmt =  conn.prepareStatement(sql);
 		if (vals != null && vals.length > 0) {

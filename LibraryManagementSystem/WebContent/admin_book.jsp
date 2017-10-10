@@ -128,7 +128,7 @@ if (request.getAttribute("books") != null) {
                                     <%for (Book book : books) {%>
 									<tr>
 										<td> <%= books.indexOf(book) + 1 %> </td>
-										<td> <%= book.getTitle() %> <span class="badge"><%= book.getNumOfCopies() %></span></td>
+										<td> <%= book.getTitle() %> <span class="badge"><%= book.getTotalNumOfCopies() %></span></td>
 										<td> <%if (book.getPublisher() != null) {%>
 											 	<span class="label label-info" style = "margin: 5px 5px 5px 5px"><%out.println(book.getPublisher().getPublisherName()); %></span>
 											 <%}%></td>

@@ -5,7 +5,7 @@
 package com.gcit.libmgmtsys.entity;
 
 import java.io.Serializable;
-import java.util.List;
+import java.util.*;
 
 public class Book implements Serializable{
 	
@@ -17,7 +17,25 @@ public class Book implements Serializable{
 	private List<Author>   authors;
 	private List<Genre>    genres;
 	private List<Borrower> borrowers;
+	private HashMap<Integer, Integer> branchCopies;	//branchId, noOfCopies
+	private Integer totalNumOfCopies;
 	
+	public HashMap<Integer, Integer> getBranchCopies() {
+		return branchCopies;
+	}
+
+	public void setBranchCopies(HashMap<Integer, Integer> branchCopies) {
+		this.branchCopies = branchCopies;
+	}
+
+	public void setTotalNumOfCopies(Integer totalNumOfCopies) {
+		this.totalNumOfCopies = totalNumOfCopies;
+	}
+
+	public Integer getTotalNumOfCopies() {
+		return totalNumOfCopies;
+	}
+
 	public Publisher getPublisher() {
 		return publisher;
 	}
@@ -25,8 +43,6 @@ public class Book implements Serializable{
 	public void setPublisher(Publisher publisher) {
 		this.publisher = publisher;
 	}
-
-	private Integer numOfCopies;
 
 	public Integer getBookId() {
 		return bookId;
@@ -66,14 +82,6 @@ public class Book implements Serializable{
 
 	public void setBorrowers(List<Borrower> borrowers) {
 		this.borrowers = borrowers;
-	}
-
-	public Integer getNumOfCopies() {
-		return numOfCopies;
-	}
-
-	public void setNumOfCopies(Integer numOfCopies) {
-		this.numOfCopies = numOfCopies;
 	}
 
 	@Override

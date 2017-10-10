@@ -51,7 +51,7 @@ public class BookLoansDAO extends BaseDAO{
 		setPageNo(pageNo);
 		if (cardNo != null && !cardNo.isEmpty()) {
 			Integer borrowerId = Integer.parseInt(cardNo);
-			return executeQuery("SELECT * FROM tbl_book_loans WHERE borrowerId = ?",
+			return executeQuery("SELECT * FROM tbl_book_loans WHERE cardNo = ?",
 					new Object[] {borrowerId});
 		} else {
 			return executeQuery("SELECT * FROM tbl_book_loans", null);
@@ -80,6 +80,11 @@ public class BookLoansDAO extends BaseDAO{
 //		return executeFirstLevelQuery();
 //		
 //	}
+	public List<BookLoans> readBookLoansByCardNoAndBranchId(Integer cardNo, Integer branchId) throws SQLException {
+		String sql = "SELECT * FROM tbl_book_loans WHERE cardNo = ? AND branchId = ? AND dateIn IS NULL";
+		return executeQuery(sql, new Object[] {cardNo, branchId});
+	}
+	
 	
 	//TO-DO: delete a book loan
 	

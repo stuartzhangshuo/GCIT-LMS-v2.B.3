@@ -152,13 +152,15 @@ public class BookDAO extends BaseDAO{
 		String sql_borrowers = "SELECT * FROM tbl_borrower WHERE cardNo IN " +
                 			  "(SELECT cardNo FROM tbl_book_loans WHERE bookId = ?)";
 		
-		String sql_noOfCopies = "SELECT bookId, branchId, sum(noOfCopies) as noOfCopies FROM tbl_book_copies WHERE bookId = ?";
+		//String sql_noOfCopies = "SELECT bookId, branchId, sum(noOfCopies) as noOfCopies FROM tbl_book_copies WHERE bookId = ?";
+		String sql_noOfCopies = "SELECT * FROM tbl_book_copies WHERE bookId = ?";
 		
 		List<Book> books = new ArrayList<>();
 		while (rs.next()) {
 			Book book = new Book();
 			book.setBookId(rs.getInt("bookId"));
 			book.setTitle(rs.getString("title"));
+			
 			List<Publisher> publisher = publisherDao.executeFirstLevelQuery(sql_publisher, new Object[] {rs.getInt("pubId")});
 			if (publisher == null || publisher.isEmpty()) {
 				book.setPublisher(null);
@@ -168,8 +170,21 @@ public class BookDAO extends BaseDAO{
 			book.setAuthors(authorDao.executeFirstLevelQuery(sql_author, new Object[] {book.getBookId()}));
 			book.setGenres(genreDao.executeFirstLevelQuery(sql_genre, new Object[] {book.getBookId()}));
 			book.setBorrowers(borrowerDao.executeFirstLevelQuery(sql_borrowers, new Object[] {book.getBookId()}));
+
 			List<BookCopies> bookCopies = bookCopiesDao.executeFirstLevelQuery(sql_noOfCopies, new Object[] {book.getBookId()});
-			book.setNumOfCopies(bookCopies.get(0).getNoOfCopies());	//no of copies in all branch
+			HashMap<Integer, Integer> map = new HashMap<>();
+			if (bookCopies == null || bookCopies.size() == 0) {
+				book.setTotalNumOfCopies(0);
+				book.setBranchCopies(map);
+			} else {
+				int total = 0;
+				for (BookCopies bookCopy : bookCopies) {
+					total += bookCopy.getNoOfCopies();
+					map.put(bookCopy.getLibraryBranch().getBranchId(), bookCopy.getNoOfCopies());
+				}
+				book.setBranchCopies(map);
+				book.setTotalNumOfCopies(total);	//no of copies in all branch
+			}
 			books.add(book);
 		}
 		return books;

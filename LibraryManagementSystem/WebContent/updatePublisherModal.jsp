@@ -10,7 +10,7 @@
 	String		 publisherAddress = publisher.getPublisherAddress();
 	String 		 publisherPhone   = publisher.getPublisherPhone();
 	List<Book>   authorBooks 	  = publisher.getBooks();
-	List<Book>   books       	  = service.readBooks(null, 1);
+	List<Book>   books       	  = service.readBooks(null, null);
 %>
 <div>
 	<div class="modal-header">

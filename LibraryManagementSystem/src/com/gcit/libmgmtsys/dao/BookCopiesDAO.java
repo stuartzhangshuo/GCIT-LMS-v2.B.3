@@ -35,13 +35,17 @@ public class BookCopiesDAO extends BaseDAO{
 		return executeQuery("SELECT bookId, branchId, sum(noOfCopies) as noOfCopies FROM tbl_book_copies WHERE bookId = ?", 
 				new Object[] {bookId});
 	}
+	
+//	//return total number of book copies in a library branch.
+//	public Integer getNoOfCopiesInBranch(Integer boodId, Integer branchId) {
+//		
+//	}
 
 	@Override
 	protected List<BookCopies> parseFirstLevelData(ResultSet rs) throws SQLException {
 		List<BookCopies> bookCopies = new ArrayList<>();
-		while (rs.next()) {
+		while (rs.next() && rs.getInt("bookId") != 0) {
 			BookCopies bookCopy = new BookCopies();
-			
 			Book 		  	 book 		   	  = new Book();
 			LibraryBranch 	 libraryBranch 	  = new LibraryBranch();
 			BookDAO 		 bookDao 	      = new BookDAO(conn);
@@ -61,10 +65,18 @@ public class BookCopiesDAO extends BaseDAO{
 	@Override
 	protected List parseData(ResultSet rs) throws SQLException {
 		List<BookCopies> bookCopies = new ArrayList<>();
-		while (rs.next()) {
+		while (rs.next() && rs.getInt("bookId") != 0) {
 			BookCopies bookCopy = new BookCopies();
-			bookCopy.getBook().setBookId(rs.getInt("bookId"));
-			bookCopy.getLibraryBranch().setBranchId(rs.getInt("branchId"));
+			Book 		  	 book 		   	  = new Book();
+			LibraryBranch 	 libraryBranch 	  = new LibraryBranch();
+			BookDAO 		 bookDao 	      = new BookDAO(conn);
+			LibraryBranchDAO libraryBranchDao = new LibraryBranchDAO(conn);
+			
+			book 		  = bookDao.readOneBookFirstLevel(rs.getInt("bookId"));
+			libraryBranch = libraryBranchDao.readOneLibrayBranchFirstLevel(rs.getInt("branchId"));
+			
+			bookCopy.setBook(book);
+			bookCopy.setLibraryBranch(libraryBranch);
 			bookCopy.setNoOfCopies(rs.getInt("noOfCopies"));
 			bookCopies.add(bookCopy);
 		}

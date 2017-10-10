@@ -9,9 +9,9 @@
 	List<Author>    bookAuthors   = book.getAuthors();
 	List<Genre>     bookGenres    = book.getGenres();
 	
-	List<Author>    authors    = service.readAuthors(null, 1);
-	List<Publisher> publishers = service.readPublishers(null, 1);
-	List<Genre>     genres     = service.readGenres(null, 1);
+	List<Author>    authors    = service.readAuthors(null, null);
+	List<Publisher> publishers = service.readPublishers(null, null);
+	List<Genre>     genres     = service.readGenres(null, null);
 %>
 <div>
 	<div class="modal-header">
