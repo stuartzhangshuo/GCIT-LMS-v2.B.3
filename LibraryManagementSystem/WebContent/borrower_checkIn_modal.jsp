@@ -1,10 +1,10 @@
+<%@page import="com.gcit.libmgmtsys.service.BorrowerService"%>
 <%@page import="com.gcit.libmgmtsys.entity.LibraryBranch"%>
 <%@page import="java.util.List"%>
 <%@page import="com.gcit.libmgmtsys.entity.Book"%>
 <%@page import="com.gcit.libmgmtsys.entity.Author"%>
-<%@page import="com.gcit.libmgmtsys.service.AdminService"%>
 <%
-	AdminService service = new AdminService();
+	BorrowerService service = new BorrowerService();
 	List<LibraryBranch> libraryBranches   = service.readLibraryBranches(null, null);
 %>
 <div>

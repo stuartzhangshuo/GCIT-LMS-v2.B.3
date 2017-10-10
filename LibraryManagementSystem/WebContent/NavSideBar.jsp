@@ -40,10 +40,7 @@
                 <a href="javascript:;" data-toggle="collapse" data-target="#librarian"><i class="fa fa-fw fa-arrows-v"></i> Librarian <i class="fa fa-fw fa-caret-down"></i></a>
                 <ul id="librarian" class="collapse">
                     <li>
-                        <a href="#">View/Update Branch Info</a>
-                    </li>
-                    <li>
-                        <a href="#">Update Book Copies</a>
+                        <a data-toggle = "modal" data-target = "#branchSelection" href="librarian_login_modal.jsp">View/Update Branch Info</a>
                     </li>
                 </ul>
             </li>

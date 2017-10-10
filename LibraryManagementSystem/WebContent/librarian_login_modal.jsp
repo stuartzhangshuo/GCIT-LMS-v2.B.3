@@ -1,9 +1,8 @@
-<%@page import="com.gcit.libmgmtsys.service.BorrowerService"%>
+<%@page import="com.gcit.libmgmtsys.service.LibrarianService"%>
 <%@page import="com.gcit.libmgmtsys.entity.LibraryBranch"%>
 <%@page import="java.util.List"%>
-<%@page import="com.gcit.libmgmtsys.entity.Book"%>
 <%
-	BorrowerService service = new BorrowerService();
+	LibrarianService service = new LibrarianService();
 	List<LibraryBranch> libraryBranches   = service.readLibraryBranches(null, null);
 %>
 <div>
@@ -12,14 +11,11 @@
 		<span aria-hidden="true">&times;</span></button>
 		<h4 class="modal-title">Please select your library branch and enter your card number: </h4>
 	</div>
-	<form action="borrowerCheckOut" method="post">
+	<form action="librarianLogin" method="post">
 		<div class="modal-body">
-			<p>Card Number:</p>
-			<input type="text" class="form-control" name="cardNo">
-			<br>
 			<p>Please select your library branch: </p>
 			<div class = "form-group" align = "center">
-				<select class = "form-control" id="bookList" name="branchId" style = "width:500px">
+				<select class = "form-control" id="branchList" name="branchId" style = "width:500px">
 					<% for (LibraryBranch branch : libraryBranches) { %>
 						<option value="<%=branch.getBranchId()%>"><%=branch.getBranchName()%></option>
 					<% } %>

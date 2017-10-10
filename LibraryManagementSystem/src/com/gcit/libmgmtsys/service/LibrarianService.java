@@ -34,6 +34,39 @@ public class LibrarianService {
 		}
 	}
 	
+	public Book readOneBook(Integer bookId) throws SQLException {
+		Connection conn = null;
+		try {
+			conn = util.getConnection();
+			BookDAO bookDao = new BookDAO(conn);
+			return bookDao.readOneBook(bookId);
+		} catch (InstantiationException | IllegalAccessException | ClassNotFoundException | SQLException e) {
+			e.printStackTrace();
+		} finally {
+			if (conn != null) {
+				conn.close();
+			}
+		}
+		return null;
+	}
+	
+	public boolean checkBranchName(String branchName) throws SQLException {
+		Connection conn = null;
+		try {
+			conn = util.getConnection();
+			LibraryBranchDAO libraryBranchDao = new LibraryBranchDAO(conn);
+			List<LibraryBranch> branchWithSameName = libraryBranchDao.checkBranchByName(branchName);
+			return branchWithSameName != null;
+		} catch (InstantiationException | IllegalAccessException | ClassNotFoundException | SQLException e) {
+			e.printStackTrace();
+		} finally {
+			if (conn != null) {
+				conn.close();
+			}
+		}
+		return Boolean.FALSE;
+	}
+	
 	public void updateBookCopies(BookCopies bookCopies) throws SQLException {
 		Connection conn = null;
 		try {
@@ -49,6 +82,39 @@ public class LibrarianService {
 				conn.close();
 			}
 		}
+	}
+	
+	public void insertBookCopies(BookCopies bookCopies) throws SQLException {
+		Connection conn = null;
+		try {
+			conn = util.getConnection();
+			BookCopiesDAO bookCopiesDao = new BookCopiesDAO(conn);
+			bookCopiesDao.addBookCopies(bookCopies);
+			conn.commit();
+		} catch (InstantiationException | IllegalAccessException | ClassNotFoundException | SQLException e) {
+			e.printStackTrace();
+			conn.rollback();
+		} finally {
+			if (conn != null) {
+				conn.close();
+			}
+		}
+	}
+	
+	public List<LibraryBranch> readLibraryBranches(String searchString, Integer pageNo) throws SQLException {
+		Connection conn = null;
+		try {
+			conn = util.getConnection();
+			LibraryBranchDAO libraryBranchrDao = new LibraryBranchDAO(conn);
+			return libraryBranchrDao.readLibraryBranches(searchString, pageNo);
+		} catch (InstantiationException | IllegalAccessException | ClassNotFoundException | SQLException e) {
+			e.printStackTrace();
+		} finally {
+			if (conn != null) {
+				conn.close();
+			}
+		}
+		return null;
 	}
 	
 //	public List<LibraryBranch> readAllBranches() throws SQLException {
@@ -67,6 +133,22 @@ public class LibrarianService {
 //		}
 //		return null;
 //	}
+	
+	public List<Book> readBooks(String searchString, Integer pageNo) throws SQLException {
+		Connection conn = null;
+		try {
+			conn = util.getConnection();
+			BookDAO bookDao = new BookDAO(conn);
+			return bookDao.readBooks(searchString, pageNo);
+		} catch (InstantiationException | IllegalAccessException | ClassNotFoundException | SQLException e) {
+			e.printStackTrace();
+		} finally {
+			if (conn != null) {
+				conn.close();
+			}
+		}
+		return null;
+	}
 	
 	public LibraryBranch readOneBranch(Integer branchId) throws SQLException {
 		Connection conn = null;

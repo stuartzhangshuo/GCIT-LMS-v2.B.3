@@ -12,10 +12,12 @@ import com.gcit.libmgmtsys.dao.BookCopiesDAO;
 import com.gcit.libmgmtsys.dao.BookDAO;
 import com.gcit.libmgmtsys.dao.BookLoansDAO;
 import com.gcit.libmgmtsys.dao.BorrowerDAO;
+import com.gcit.libmgmtsys.dao.LibraryBranchDAO;
 import com.gcit.libmgmtsys.entity.Book;
 import com.gcit.libmgmtsys.entity.BookCopies;
 import com.gcit.libmgmtsys.entity.BookLoans;
 import com.gcit.libmgmtsys.entity.Borrower;
+import com.gcit.libmgmtsys.entity.LibraryBranch;
 
 public class BorrowerService {
 	private Utilities util = new Utilities();
@@ -83,6 +85,22 @@ public class BorrowerService {
 			conn = util.getConnection();
 			BookDAO bookDao = new BookDAO(conn);
 			return bookDao.readBooks(searchString, pageNo);
+		} catch (InstantiationException | IllegalAccessException | ClassNotFoundException | SQLException e) {
+			e.printStackTrace();
+		} finally {
+			if (conn != null) {
+				conn.close();
+			}
+		}
+		return null;
+	}
+	
+	public List<LibraryBranch> readLibraryBranches(String searchString, Integer pageNo) throws SQLException {
+		Connection conn = null;
+		try {
+			conn = util.getConnection();
+			LibraryBranchDAO libraryBranchrDao = new LibraryBranchDAO(conn);
+			return libraryBranchrDao.readLibraryBranches(searchString, pageNo);
 		} catch (InstantiationException | IllegalAccessException | ClassNotFoundException | SQLException e) {
 			e.printStackTrace();
 		} finally {
