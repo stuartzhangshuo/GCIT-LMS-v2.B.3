@@ -150,7 +150,7 @@ public class BookDAO extends BaseDAO{
 		String sql_publisher = "SELECT * FROM tbl_publisher WHERE publisherId = ?";
 		
 		String sql_borrowers = "SELECT * FROM tbl_borrower WHERE cardNo IN " +
-                			  "(SELECT cardNo FROM tbl_book_loans WHERE bookId = ?)";
+                			  "(SELECT cardNo FROM tbl_book_loans WHERE bookId = ? AND dateIn IS NULL)";
 		
 		//String sql_noOfCopies = "SELECT bookId, branchId, sum(noOfCopies) as noOfCopies FROM tbl_book_copies WHERE bookId = ?";
 		String sql_noOfCopies = "SELECT * FROM tbl_book_copies WHERE bookId = ?";

@@ -73,7 +73,7 @@ public class BorrowerDAO extends BaseDAO{
 //		String sql = "SELECT b.bookId, b.title " + 
 //					 "FROM   tbl_book b, tbl_book_loans bl " + 
 //					 "WHERE  bl.cardNo = ? AND b.bookId = bl.bookId AND bl.dateIn IS NULL";
-		String sql = "SELECT * FROM tbl_book_loans WHERE cardNo = ?";
+		String sql = "SELECT * FROM tbl_book_loans WHERE cardNo = ? AND dateIn IS NULL";
 		BookLoansDAO bookLoansDao = new BookLoansDAO(conn);
 		List<Borrower> borrowers = new ArrayList<>();
 		while (rs.next()) {

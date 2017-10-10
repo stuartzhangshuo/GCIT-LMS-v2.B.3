@@ -81,12 +81,11 @@ public class LibrarianServelet extends HttpServlet {
 		
 		try {
 			//need to modify, create check method to check for key.
-			if (originalCopies == 0) {
+			if (!libService.checkBookCopies(bookCopy)) {
 				libService.insertBookCopies(bookCopy);
 			} else {
 				libService.updateBookCopies(bookCopy);
 			}
-			
 			request.setAttribute("branchId", branchId);
 		} catch (SQLException e) {
 			e.printStackTrace();

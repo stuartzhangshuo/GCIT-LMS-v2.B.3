@@ -36,6 +36,11 @@ public class BookCopiesDAO extends BaseDAO{
 				new Object[] {bookId});
 	}
 	
+	public List<BookCopies> checkBookCopies(BookCopies bookCopy) throws SQLException {
+		String sql = "SELECT * FROM tbl_book_copies WHERE bookId = ? AND branchId = ?";
+		return executeQuery(sql, new Object[] {bookCopy.getBook().getBookId(), bookCopy.getLibraryBranch().getBranchId()});
+	}
+	
 //	//return total number of book copies in a library branch.
 //	public Integer getNoOfCopiesInBranch(Integer boodId, Integer branchId) {
 //		

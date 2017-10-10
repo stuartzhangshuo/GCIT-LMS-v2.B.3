@@ -7,9 +7,11 @@ package com.gcit.libmgmtsys.service;
 import java.sql.*;
 import java.util.*;
 
+import com.gcit.libmgmtsys.dao.AuthorDAO;
 import com.gcit.libmgmtsys.dao.BookCopiesDAO;
 import com.gcit.libmgmtsys.dao.BookDAO;
 import com.gcit.libmgmtsys.dao.LibraryBranchDAO;
+import com.gcit.libmgmtsys.entity.Author;
 import com.gcit.libmgmtsys.entity.Book;
 import com.gcit.libmgmtsys.entity.BookCopies;
 import com.gcit.libmgmtsys.entity.LibraryBranch;
@@ -82,6 +84,26 @@ public class LibrarianService {
 				conn.close();
 			}
 		}
+	}
+	
+	//return true when there is a record.
+	public Boolean checkBookCopies(BookCopies bookCopy) throws SQLException {
+		Connection conn = null;
+		try {
+			conn = util.getConnection();
+			BookCopiesDAO bookCopiesDao = new BookCopiesDAO(conn);
+			List<BookCopies> bookCopies = bookCopiesDao.checkBookCopies(bookCopy);
+			if (bookCopies == null || bookCopies.size() == 0) {
+				return false;
+			}
+		} catch (InstantiationException | IllegalAccessException | ClassNotFoundException | SQLException e) {
+			e.printStackTrace();
+		} finally {
+			if (conn != null) {
+				conn.close();
+			}
+		}
+		return Boolean.TRUE;
 	}
 	
 	public void insertBookCopies(BookCopies bookCopies) throws SQLException {
